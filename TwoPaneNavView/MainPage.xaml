@@ -15,6 +15,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
+        <!-- This isn't hooked to anything, is just here to show how to insert it on top. -->
         <MUXC:NavigationView x:Name="NavViewControl" PaneDisplayMode="Top" Grid.Row="0" >
             <MUXC:NavigationView.MenuItems>
                 <MUXC:NavigationViewItem Content="One" x:Name="One" Icon="Directions"/>
@@ -23,6 +24,7 @@
             </MUXC:NavigationView.MenuItems>
         </MUXC:NavigationView>
         
+        <!-- We use BottomTop TallModeConfiguration to better show the ToggleButtons in Portrait. -->
         <MUXC:TwoPaneView x:Name="MainView" Grid.Row="1"
                     Pane1Length="1*"
                     Pane2Length="1*"
