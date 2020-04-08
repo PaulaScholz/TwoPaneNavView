@@ -1,10 +1,10 @@
-﻿# TwoPaneMarkdownEditor
+﻿# TwoPaneNavView
 
 ## Windows Developer Incubation and Learning - Paula Scholz
 
 ## Introduction
 
-![TwoPaneMarkdownEditor](MarkDownEditor/ReadmeImages/MarkdownEditor.gif)
+![TwoPaneNavView](ReadmeImages/TwoPaneNavView_unspannedPortrait.png)
 
 A Universal Windows Platform sample that illustrates the [TwoPaneView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/two-pane-view) layout control for [Dual-Screen experiences](https://docs.microsoft.com/en-us/dual-screen/introduction), 
 
