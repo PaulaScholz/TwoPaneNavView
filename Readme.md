@@ -424,6 +424,11 @@ In the `MainView.Pane1` of our `TwoPaneView` object is a row of `ToggleButton` c
             Debug.WriteLine("--------------------------------------------------------------");
         }
 ```
+This width change is most evident when the `TwoPaneNavView` application is rotated from unspanned Portrait to unspanned Landscape, like this:
+
+![TwoPaneNavView unspanned Landscape](ReadmeImages/TwoPaneNavView_unspannedLandscape.png)
+
+Note that the `ToggleButton` controls have a smaller width to fit inside the newly-resized `TwoPaneView.Pane1`.
 
 
 
