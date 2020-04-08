@@ -227,7 +227,7 @@ namespace TwoPaneNavView
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Exceptionn {0}", ex.ToString());
+                Debug.WriteLine("Exception {0}", ex.ToString());
             }
 
             return retValue;

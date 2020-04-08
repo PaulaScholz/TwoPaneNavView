@@ -338,7 +338,7 @@ We use the [ApplicationView](https://docs.microsoft.com/en-us/uwp/api/Windows.UI
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Exceptionn {0}", ex.ToString());
+                Debug.WriteLine("Exception {0}", ex.ToString());
             }
 
             return retValue;
