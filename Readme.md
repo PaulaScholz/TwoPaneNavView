@@ -187,7 +187,7 @@ The XAML of MainPage looks like this:
 Note the `TallModeConfiguration` property of the `TwoPaneView` control is set to `BottomTop` to better illustrate the `ToggleButton` controls.
 
 ## Detecting Orientation and Spanned Status
-The `MainPage_SizeChanged` event handler is fired whenever the size of the `MainPage` window changes; when the application is started, when the application is spanned by the user, and when the device is physically rotated to a new orientation (Portrait or Landscape).  This event handler contains a small state machine used to detect spanned or rotated status and saves these states to public properties.  
+The `MainPage_SizeChanged` event handler is fired whenever the size of the `MainPage` window changes; when the application is started, when the application is spanned by the user, and when the device is physically rotated to a new orientation (Portrait or Landscape).  This event handler contains a small state machine used to detect spanned or rotated status and saves these states to public `MainPage` properties.  
 
 `TwoPaneView` applications always start in an unspanned state and spanning only occurs as a result of user action.  Spanning cannot be triggered programatically, by design.
 
@@ -296,6 +296,134 @@ The code looks like this:
         }
 ```
 
+## Detect if running on DualScreen device 
+At the time of writing (April, 2020), there is no "official" V1 SDK method for detecting whether or not an application is running on a DualScreen Win10x device or running on regular desktop Windows.  Because Win10x applications should not care whether or not they are running on the desktop or a DualScreen device, this capability was left out by design.  However, because V1 DualScreen devices share a common screen size configuration, this is easy to detect.  
+
+We use the [ApplicationView](https://docs.microsoft.com/en-us/uwp/api/Windows.UI.ViewManagement.ApplicationView) class to query the number of `DisplayRegion` surfaces our device supports. DualScreen devices only have two of these.  As a sanity check, the sizes of these regions are compared with the known sizes of V1 DualScreen device screens.
+
+```csharp
+        /// <summary>
+        /// Informal test to see if we're running on a DualScreen capable device
+        /// or are running on desktop Windows. V1 SDK has no way to check this, so
+        /// we resort to this informal method.
+        /// </summary>
+        /// <returns>True if on a DualScreen device</returns>
+        public bool IsDualScreenDevice()
+        {
+            ApplicationView view = null;
+            bool retValue = false;
+
+            try
+            {
+                view = ApplicationView.GetForCurrentView();
+
+                if (view != null)
+                {
+                    var dispRegions = view.WindowingEnvironment.GetDisplayRegions();
+
+                    Debug.WriteLine(string.Format("There are {0} DisplayRegions reported in MainPage_Loaded", dispRegions.Count));
+
+                    // DualScreen devices have exactly two display regions. If we don't have
+                    // two regions, we're not on a DualScreen device.  Desktop PCs can also
+                    // have two regions, so check their sizes also.  This is for V1 of the SDK!!!
+                    if(dispRegions.Count == 2)
+                    {
+                        if( (dispRegions[1].WorkAreaOffset.X == 720 && dispRegions[1].WorkAreaSize.Height == 936) ||    // portrait
+                            (dispRegions[1].WorkAreaOffset.Y == 720 && dispRegions[1].WorkAreaSize.Height == 696) )     // landscape
+                        {
+                            retValue = true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exceptionn {0}", ex.ToString());
+            }
+
+            return retValue;
+        }
+```
+This method is called in the `MainPage_Loaded` event handler, like this:
+
+```csharp
+        /// <summary>
+        /// Here, we check if we are on a DualScreen device
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            if(IsDualScreenDevice())
+            {
+                DeviceTypeText.Text = "This is running on DualScreen device";
+            }
+            else
+            {
+                DeviceTypeText.Text = "This is running on desktop Windows";
+            }
+        }
+```
+
+## Adjusting UI element sizes based on Device orientation
+
+In the `MainView.Pane1` of our `TwoPaneView` object is a row of `ToggleButton` controls.  The width of these buttons must be adjusted in response to a spanning or orientation change.  This is done in the `MainView_SizeChanged` event handler of `TwoPaneView, like this:
+
+```csharp
+        /// <summary>
+        /// Fired when the size of the TwoPaneView changes.  This is where we adjust
+        /// UI element sizes within the TwoPaneView.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Debug.WriteLine("MainView_SizeChanged fired on TwoPaneView object.");
+
+            // need to adjust by the enclosing Grid's padding and margin values
+            double tpvWidth = MainView.ActualWidth - Pane1Grid.Padding.Left - Pane1Grid.Padding.Right
+                - Pane1Grid.Margin.Left - Pane1Grid.Margin.Right;
+
+            if (CurrentDisplayOrientation == DisplayOrientations.Portrait && !ApplicationIsSpanned)
+            {
+                ButtonWidth = tpvWidth / _numberOfButtons;
+
+                Debug.WriteLine("Portrait and not spanned");
+                Debug.WriteLine(string.Format("MainView.ActualWidth = {0}", MainView.ActualWidth));
+                Debug.WriteLine(string.Format("MainView.ActualHeight = {0}", MainView.ActualHeight));
+                Debug.WriteLine(string.Format("ButtonWidth = {0}", ButtonWidth));
+            }
+            else if (CurrentDisplayOrientation == DisplayOrientations.Landscape && !ApplicationIsSpanned)
+            {
+                ButtonWidth = tpvWidth / (_numberOfButtons * 2);
+
+                Debug.WriteLine("Landscape and not spanned");
+                Debug.WriteLine(string.Format("MainView.ActualWidth = {0}", MainView.ActualWidth));
+                Debug.WriteLine(string.Format("MainView.ActualHeight = {0}", MainView.ActualHeight));
+                Debug.WriteLine(string.Format("ButtonWidth = {0}", ButtonWidth));
+            }
+            else if (CurrentDisplayOrientation == DisplayOrientations.Portrait && ApplicationIsSpanned)
+            {
+                ButtonWidth = tpvWidth / (_numberOfButtons * 2);
+
+                Debug.WriteLine("Portrait and spanned");
+                Debug.WriteLine(string.Format("MainView.ActualWidth = {0}", MainView.ActualWidth));
+                Debug.WriteLine(string.Format("MainView.ActualHeight = {0}", MainView.ActualHeight));
+                Debug.WriteLine(string.Format("ButtonWidth = {0}", ButtonWidth));
+            }
+            else if (CurrentDisplayOrientation == DisplayOrientations.Landscape && ApplicationIsSpanned)
+            {
+                ButtonWidth = tpvWidth / _numberOfButtons;
+
+                Debug.WriteLine("Landscape and spanned");
+                Debug.WriteLine(string.Format("MainView.ActualWidth = {0}", MainView.ActualWidth));
+                Debug.WriteLine(string.Format("MainView.ActualHeight = {0}", MainView.ActualHeight));
+                Debug.WriteLine(string.Format("ButtonWidth = {0}", ButtonWidth));
+            }
+
+            Debug.WriteLine("--------------------------------------------------------------");
+        }
+```
 
 
 
