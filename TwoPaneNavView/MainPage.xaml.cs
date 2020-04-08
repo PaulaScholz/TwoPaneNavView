@@ -38,7 +38,7 @@ namespace TwoPaneNavView
         public static MainPage Current = null;
 #pragma warning restore CA2211 // Non-constant fields should not be visible
 
-        // These are used to make individual panes visible or not.
+        // These are used to make individual panes visible or not. Not used here.
         private GridLength OneStarGridLength = new GridLength(1, GridUnitType.Star);
         private GridLength ZeroStarGridLength = new GridLength(0, GridUnitType.Star);
 
