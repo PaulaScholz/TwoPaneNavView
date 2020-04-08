@@ -4,7 +4,7 @@
 
 ## Introduction
 
-![TwoPaneNavView](ReadmeImages/TwoPaneNavView_unspannedPortrait.png)
+![TwoPaneNavView](ReadmeImages/TwoPaneNavView_unspannedPortrait.PNG)
 
 A Universal Windows Platform sample that illustrates the [TwoPaneView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/two-pane-view) layout control for [Dual-Screen experiences](https://docs.microsoft.com/en-us/dual-screen/introduction), 
 
@@ -50,11 +50,9 @@ You should follow this [guidance](https://docs.microsoft.com/en-us/dual-screen/w
 
 The Visual Studio Solution is shown below:
 
-![VisualStudioSolution](MarkDownEditor/ReadmeImages/MarkdownEditorVisualStudioSolution.png)
+![VisualStudioSolution](ReadmeImages/TwoPaneNavView_VisualStudioSolution.png)
 
 `MainPage.xaml` contains the single Page and `TwoPaneView` control and serves as the core of the project.  
-
-The `sample.txt` markdown document is embedded as Content and serves as the document to display in the [MarkdownTextBlock](https://docs.microsoft.com/en-us/windows/communitytoolkit/controls/markdowntextblock) XAML Control from the [Windows Community Toolkit](https://docs.microsoft.com/en-us/windows/communitytoolkit/).
 
 ## TwoPaneView
 The primary display layout panel for our application is [TwoPaneView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/two-pane-view). This control provides a separate display surface `Pane` for each screen when the application is `spanned` across screens, and when the application is on a single screen these panes are displayed according to its `PanePriority`, `TallModeConfiguration` and `WideModeConfiguration` properties.  
