@@ -4,9 +4,9 @@
 
 ## Introduction
 
-![TwoPaneNavView](ReadmeImages/TwoPaneNavView_unspannedPortrait.PNG)
+![TwoPaneNavView](ReadmeImages/hero-devices.png)
 
-A Universal Windows Platform sample that illustrates the [TwoPaneView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/two-pane-view) layout control for [Dual-Screen experiences](https://docs.microsoft.com/en-us/dual-screen/introduction), 
+A Universal Windows Platform sample that illustrates the [TwoPaneView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/two-pane-view) layout control for [Dual-Screen experiences](https://docs.microsoft.com/en-us/dual-screen/introduction).
 
 [TwoPaneView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/two-pane-view) provides two distinct areas of content that can be spanned onto separate screens on dual-screen devices like the [Surface Neo](https://www.microsoft.com/en-us/surface/devices/surface-neo?&OCID=AID2000022_SEM_oCeJqLSf&msclkid=41672d2d892e1554df52734a51ae580b). `TwoPaneView` is the primary layout panel used to support dual-screen development for UWP applications.
 
@@ -59,17 +59,19 @@ The primary display layout panel for our application is [TwoPaneView](https://do
 
 `MainPage.xaml` is the single page in our solution.  On application startup, it appears like this:
 
-![MainPage](MarkDownEditor/ReadmeImages/MarkdownEditorSingleScreen.png)
+![MainPage](ReadmeImages/TwoPaneNavView_unspannedPortrait.PNG)
 
-At the top of the page, we see a [TextToolbar XAML Control](https://docs.microsoft.com/en-us/windows/communitytoolkit/controls/texttoolbar) from the [Windows Community Toolkit](https://docs.microsoft.com/en-us/windows/communitytoolkit/).  This control works in conjunction with the [RichEditBox control](https://docs.microsoft.com/en-us/uwp/api/Windows.UI.Xaml.Controls.RichEditBox) of the `Windows SDK` to insert `Markdown` tags into the text.
+At the top of the page, we see a [NavigationView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/navigationview) which provides top-level navigation for a UWP app.  The top navigation style is shown and illustrates how you would place a `NavigationView` on the same page that hosts a `TwoPaneView`.  None of the `NavigationView` links are active in this demo.
 
-Below this, we show `Pane2` of the `TwoPaneView` control, which is our application's [MarkdownTextBlock XAML Control](https://docs.microsoft.com/en-us/windows/communitytoolkit/controls/markdowntextblock), providing full markdown and parsing capability for UWP apps.
+Below this, we show `Pane2` of the `TwoPaneView` control, in a "BottomTop" [TallModeConfiguration](https://docs.microsoft.com/en-us/uwp/api/microsoft.ui.xaml.controls.twopaneview.tallmodeconfiguration?view=winui-2.3).  This pane is empty except for the `TextBox` label.
 
-Finally, we have `Pane1` of the `TwoPaneView` control, which contains our [RichEditBox control](https://docs.microsoft.com/en-us/uwp/api/Windows.UI.Xaml.Controls.RichEditBox) where `Markdown` text is entered.  This control is bound to the `MarkdownTextBlock` control so that text changes are immediately reflected in the `MarkDown Preview` area of the app.
+Finally, we have `Pane1` of the `TwoPaneView` control, which contains a row of [ToggleButton](https://docs.microsoft.com/en-us/uwp/api/Windows.UI.Xaml.Controls.Primitives.ToggleButton) controls, and two `TextBox` controls.
+
+None of the `ToggleButton` controls are connected to a Click event handler, and are present to show how the size of UI elements may be adjusted to reflect device orientation as the user spans or rotates the device.  This happens in the `MainView_SizeChanged` event handler.
 
 When the user spans this application across screens, the panes are displayed like this:
 
-![MainPage Spanned](MarkDownEditor/ReadmeImages/MarkdownEditorSpanned.png)
+![MainPage Spanned](ReadmeImages/TwoPaneNavView_spannedPortrait.png)
 
 `Pane1` appears on the left-hand screen, and `Pane2` appears on the right.  The scrollbars of each pane are tied together in the code-behind to enable synchronous scrolling.
 
