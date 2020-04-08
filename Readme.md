@@ -73,217 +73,230 @@ When the user spans this application across screens, the panes are displayed lik
 
 ![MainPage Spanned](ReadmeImages/TwoPaneNavView_spannedPortrait.png)
 
-`Pane1` appears on the left-hand screen, and `Pane2` appears on the right.  The scrollbars of each pane are tied together in the code-behind to enable synchronous scrolling.
+`Pane1` appears on the left-hand screen, and `Pane2` appears on the right.  
 
 The XAML of MainPage looks like this:
 
 ```xaml
-<Page
-    x:Class="MarkDownEditor.MainPage"
+  <Page
+    x:Class="TwoPaneNavView.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:MarkDownEditor"
+    xmlns:local="using:TwoPaneNavView"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    xmlns:winuicontrols="using:Microsoft.UI.Xaml.Controls" 
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:MUXC="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,7)" 
-    Loaded="Page_Loaded">
-    
-    <Page.Resources>
-		<converters:ToolbarFormatActiveConverter x:Key="IsFormatMarkdown"
-                    Format="MarkDown" />
-	</Page.Resources>
-    
-	<Grid x:Name="MainGrid" Margin="12">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition />
-		</Grid.RowDefinitions>
-        
-        <!-- This TextToolbar is used to insert Markdown tags into the EditZome RichEditBox. -->
-		<controls:TextToolbar x:Name="Toolbar"
-                          Editor="{Binding ElementName=EditZone}"
-                          IsEnabled="True"
-                          Format="MarkDown"
-                          UseURIChecker="True"
-                          Background="#4C4F4F4F" />
-        
-		<!--Pane 1 and Pane 2 take up 50% each of the available real-estate  by setting pane length to 1* Grid length. 
-            In tall mode, To show the markdowneditor(pane1) at the bottom, tall mode is set to BottomTop -->
-		<winuicontrols:TwoPaneView x:Name="twoPaneViewDemo" x:FieldModifier="public" 
-                 Pane1Length="1*"
-                 Pane2Length="1*"
-                 MinTallModeHeight="500"
-                 MinWideModeWidth="700"
-                 TallModeConfiguration="BottomTop"
-                 WideModeConfiguration="LeftRight" 
-                 Grid.Row="1">
-            
-            <!-- This is the Editor pane where Markdown is entered and edited. -->
-			<winuicontrols:TwoPaneView.Pane1>
-				<Grid x:Name="MarkDownEditor"
-                    Grid.Row="1"
-                    Margin="0, 16"
-                    Visibility="{Binding Format, ElementName=Toolbar, Mode=OneWay, Converter={StaticResource IsFormatMarkdown}}">
-                    
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition />
-					</Grid.RowDefinitions>
-                    
-					<TextBlock Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}"
-                     Style="{StaticResource SubtitleTextBlockStyle}"
-                     Text="MarkDown Editor" />
-                    
-					<ScrollViewer x:Name="Editor" ViewChanged="MarkEditor_ViewChanged" Grid.Row="1">
-						<RichEditBox x:Name="EditZone"                     
-                         Margin="0, 4, 10, 0"
-                         PlaceholderText="Enter Text Here"
-                         TextWrapping="Wrap"
-                         TextChanged="EditZone_TextChanged"
-                         VerticalContentAlignment="Stretch"
-                         Padding="10,3"
-                         BorderThickness="1"
-                         BorderBrush="{ThemeResource SystemControlForegroundChromeHighBrush}"
-                         Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                         contract7Present:SelectionFlyout="{x:Null}"/>
-					</ScrollViewer>
-				</Grid>
-			</winuicontrols:TwoPaneView.Pane1>
-            
-            <!-- This is the Markdown display pane.  -->
-			<winuicontrols:TwoPaneView.Pane2>
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-				<Grid x:Name="MarkDownPreview"
-                  Grid.Row="1"
-                  Margin="0, 16"
-                  Visibility="{Binding Format, ElementName=Toolbar, Mode=OneWay, Converter={StaticResource IsFormatMarkdown}}">
-                    
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition />
-					</Grid.RowDefinitions>
-                    
-					<TextBlock Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}"
-                     Style="{StaticResource SubtitleTextBlockStyle}" 
-                     Text="MarkDown Preview"  Margin="10, 0, 0, 0" />
-					<ScrollViewer x:Name="MarkEditor" ViewChanged="MarkEditor_ViewChanged" Grid.Row="1">
-						<controls:MarkdownTextBlock x:Name="Previewer"
-                                      Background="LightGray"
-                                      Padding="10,3"
-                                      Margin="10, 4, 0, 0"
-                                      Canvas.ZIndex="99"
-                                      BorderThickness="1"
-                                      BorderBrush="{ThemeResource SystemControlForegroundChromeHighBrush}"
-                                      Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}"
-                                      ScrollViewer.IsVerticalRailEnabled="False" />
-					</ScrollViewer>
-				</Grid>                
-			</winuicontrols:TwoPaneView.Pane2>  
+    <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <!-- This isn't hooked to anything, is just here to show how to insert it on top. -->
+        <MUXC:NavigationView x:Name="NavViewControl" PaneDisplayMode="Top" Grid.Row="0" >
+            <MUXC:NavigationView.MenuItems>
+                <MUXC:NavigationViewItem Content="One" x:Name="One" Icon="Directions"/>
+                <MUXC:NavigationViewItem Content="Two" x:Name="Two" Icon="Clock"/>
+                <MUXC:NavigationViewItem Content="Three" x:Name="Three" Icon="Camera"/>
+            </MUXC:NavigationView.MenuItems>
+        </MUXC:NavigationView>
+        
+        <!-- We use BottomTop TallModeConfiguration to better show the ToggleButtons in Portrait. -->
+        <MUXC:TwoPaneView x:Name="MainView" Grid.Row="1"
+                    Pane1Length="1*"
+                    Pane2Length="1*"
+                    MinTallModeHeight="500"
+                    MinWideModeWidth="700"
+                    TallModeConfiguration="BottomTop"
+                    WideModeConfiguration="LeftRight" >
             
-		</winuicontrols:TwoPaneView>
-	</Grid>
+            <MUXC:TwoPaneView.Pane1>
+                <Grid Background="Wheat" x:Name="Pane1Grid" Padding="8" Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        
+                        <!-- The width of these ToggleButton objects is computed in MainView.SizeChanged event handler. -->
+                        <ToggleButton Width="{x:Bind ButtonWidth, Mode=OneWay}" CornerRadius="0" >
+                            <ToggleButton.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Button 0" Margin="0,0,10,0" Foreground="GhostWhite" />
+                                </StackPanel>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        
+                        <ToggleButton Width="{x:Bind ButtonWidth, Mode=OneWay}" CornerRadius="0">
+                            <ToggleButton.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Button 1" Margin="0,0,10,0" Foreground="Red"/>
+                                </StackPanel>
+                            </ToggleButton.Content>
+
+                        </ToggleButton>
+                        
+                        <ToggleButton Width="{x:Bind ButtonWidth, Mode=OneWay}" CornerRadius="0">
+                            <ToggleButton.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Button 2" Margin="0,0,10,0" Foreground="LightGreen"/>
+                                </StackPanel>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        
+                        <ToggleButton  Width="{x:Bind ButtonWidth, Mode=OneWay}" CornerRadius="0">
+                            <ToggleButton.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Button 3" Margin="0,0,10,0" Foreground="Cyan"/>
+                                </StackPanel>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        
+                        <ToggleButton Width="{x:Bind ButtonWidth, Mode=OneWay}" CornerRadius="0">
+                            <ToggleButton.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Button 4" Margin="0,0,10,0" Foreground="Yellow" />
+                                </StackPanel>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock x:Name="Pane1Text" Text="Pane 1" FontSize="36" Foreground="Black" HorizontalAlignment="Center"  />
+                        <TextBlock x:Name="DeviceTypeText" Text="This is placeholder text." FontSize="24" Foreground="Black" HorizontalAlignment="Center"  />
+                    </StackPanel>
+                    
+                </Grid>  
+            </MUXC:TwoPaneView.Pane1>
+            
+            <MUXC:TwoPaneView.Pane2 >
+                <Grid Background="Blue" x:Name="Pane2Grid">
+                    <TextBlock x:Name="Pane2Text" Text="Pane 2" FontSize="36" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Grid>                
+            </MUXC:TwoPaneView.Pane2>
+            
+        </MUXC:TwoPaneView>
+    </Grid>
 </Page>
 ```
-Note the `TallModeConfiguration` property of the `TwoPaneView` control is set to `BottomTop`, meaning the pane that has display priority, the `RichTextBox` control, is shown on the bottom in single screen mode.
+Note the `TallModeConfiguration` property of the `TwoPaneView` control is set to `BottomTop` to better illustrate the `ToggleButton` controls.
 
-The code-behind for this page is simple. We rely on the intrinsic capabilities of our [Windows Community Toolkit](https://docs.microsoft.com/en-us/windows/communitytoolkit/) controls and [TwoPaneView](https://docs.microsoft.com/en-us/windows/uwp/design/controls-and-patterns/two-pane-view) for almost all functionality.
+## Detecting Orientation and Spanned Status
+The `MainPage_SizeChanged` event handler is fired whenever the size of the `MainPage` window changes; when the application is started, when the application is spanned by the user, and when the device is physically rotated to a new orientation (Portrait or Landscape).  This event handler contains a small state machine used to detect spanned or rotated status and saves these states to public properties.  
+
+`TwoPaneView` applications always start in an unspanned state and spanning only occurs as a result of user action.  Spanning cannot be triggered programatically, by design.
+
+The code looks like this:
 
 ```csharp    
-public sealed partial class MainPage : Page
-    {
-        public MainPage()
+        /// <summary>
+        /// Fired when a rotation or spanning occurs. Dual-Screen experience windows
+        /// are either maximized or minimized, there is no intermediate position.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.InitializeComponent();
+            Debug.WriteLine("MainPage_SizeChanged fired on Page object.");
+
+            Debug.WriteLine(string.Format("Previous size: {0} width  {1} height", e.PreviousSize.Width, e.PreviousSize.Height));
+            Debug.WriteLine(string.Format("New size: {0} width  {1} height", e.NewSize.Width, e.NewSize.Height));
+
+            // determine orientation & spanning state without using ApplicationView object
+            // through this little state machine
+
+            // If the PreviousSize values are zero, then the NewSize
+            // values are those at application launch.  If the app
+            // is minimized and then maximized, the PreviousSize values
+            // are whatever they were before minimized.  The app will
+            // always be maximized at an unspanned state, regardless of
+            // whether it was spanned before minimization.
+
+            // this if clause determines the initial conditions
+            if (e.PreviousSize.Width == 0 && e.PreviousSize.Height == 0)
+            {
+                // Right now, all we know is we started from application launch
+                // and are unspanned. Let's determine whether or not we're 
+                // Landscape or Portrait orientation.
+                if (e.NewSize.Width < e.NewSize.Height)
+                {
+                    CurrentDisplayOrientation = DisplayOrientations.Portrait;
+                }
+                else
+                {
+                    CurrentDisplayOrientation = DisplayOrientations.Landscape;
+                }
+
+                // We always start out unspanned. Spanning is a result of user action.
+                ApplicationIsSpanned = false;
+            }
+            else if (CurrentDisplayOrientation == DisplayOrientations.Portrait && !ApplicationIsSpanned)
+            {
+                // we're transitioning from Portrait-Unspanned to either Portrait-Spanned (spanning action)
+                // or Landscape-Unspanned (rotation action)
+
+                // If height does not change, we're going to Portrait-spanned
+                if (e.PreviousSize.Height == e.NewSize.Height)
+                {
+                    ApplicationIsSpanned = true;
+                }
+                else
+                {
+                    // the height changed, we're now in Landscape unspanned
+                    CurrentDisplayOrientation = DisplayOrientations.Landscape;
+                }
+            }
+            else if (CurrentDisplayOrientation == DisplayOrientations.Landscape && !ApplicationIsSpanned)
+            {
+                // we're transitioning from Landscape-Unspanned to either Landscape-Spanned (spanning action)
+                // or Portrait-Unspanned (rotation action)
+                if (e.PreviousSize.Width == e.NewSize.Width)
+                {
+                    ApplicationIsSpanned = true;
+                }
+                else
+                {
+                    // the width changed, we're now in Portrait-Unspanned
+                    CurrentDisplayOrientation = DisplayOrientations.Portrait;
+                }
+            }
+            else if (CurrentDisplayOrientation == DisplayOrientations.Portrait && ApplicationIsSpanned)
+            {
+                // we're transitioning from Portrait-Spanned to either Portrait-Unspanned (spanning action)
+                // or Landscape-Spanned (rotation action)
+                if (e.PreviousSize.Height == e.NewSize.Height)
+                {
+                    ApplicationIsSpanned = false;
+                }
+                else
+                {
+                    // the height changed, we're now in Landscape-Spanned
+                    CurrentDisplayOrientation = DisplayOrientations.Landscape;
+                }
+            }
+            else if (CurrentDisplayOrientation == DisplayOrientations.Landscape && ApplicationIsSpanned)
+            {
+                // we're transitioning from Landscape-Spanned to either Landscape-Unspanned (spanning action)
+                // or Portrait-Spanned (rotation action)
+                if (e.PreviousSize.Width == e.NewSize.Width)
+                {
+                    ApplicationIsSpanned = false;
+                }
+                else
+                {
+                    // the width changed, we're now in Portrait-Spanned
+                    CurrentDisplayOrientation = DisplayOrientations.Portrait;
+                }
+            }
         }
-
-		/// <summary>
-		/// If the text in the RichTextBox changes, place it into the MarkdownTextBlock
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void EditZone_TextChanged(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-		{
-			string text = Toolbar.Formatter?.Text;
-			Previewer.Text = string.IsNullOrWhiteSpace(text) ? "Nothing to Preview" : text;
-		}
-
-#pragma warning disable 612, 618
-		/// <summary>
-		/// If the Markdown Editor window scrolls, scroll the Editor window as well and vice-versa.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		/// 
-		private void MarkEditor_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
-		{
-			// Note: we are using "obsolete" ScrollToVerticalOffset and ScrollToHorizontalOffset
-			// methods by design.
-
-			var scrollViewer = (ScrollViewer)sender;
-			if (scrollViewer == Editor)
-			{
-				MarkEditor.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-				MarkEditor.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset);
-
-				// Note: This is the "new" way of scrolling, but with current implementation provides
-				// a "jumpy" scrolling experience, thus the "obsolete" methods above. 
-				// This is put here for reference in case that problem is fixed in future builds.
-				//MarkEditor.ChangeView(scrollViewer.HorizontalOffset, scrollViewer.VerticalOffset, null);
-			}
-			else
-			{
-				Editor.ScrollToVerticalOffset(scrollViewer.VerticalOffset);
-				Editor.ScrollToHorizontalOffset(scrollViewer.HorizontalOffset);
-
-				// Note: This is the "new" way of scrolling, but with current implementation provides
-				// a "jumpy" scrolling experience, thus the older "obsolete" methods above. 
-				// This is put here for reference in case that problem is fixed in future builds.
-				//Editor.ChangeView(scrollViewer.HorizontalOffset, scrollViewer.VerticalOffset, null);
-			}
-		}
-#pragma warning restore 612, 618
-
-		/// <summary>
-		/// Load our markdown sample text and place it into the RichTextBox control.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private async void Page_Loaded(object sender, RoutedEventArgs e)
-		{
-
-			if (Previewer != null)
-			{
-				Previewer.LinkClicked += Previewer_LinkClicked;
-				Previewer.ImageClicked += Previewer_ImageClicked;
-				Previewer.CodeBlockResolving += Previewer_CodeBlockResolving;
-			}
-
-			// Load the initial demo data from the file.  Make sure the file properties are set to 
-			// Build Action - Content and Copy to Output Directory - Always
-			try
-			{
-				StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///sample.txt"));
-				Windows.Storage.Streams.IRandomAccessStream fileStream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
-				EditZone.Document.LoadFromStream(Windows.UI.Text.TextSetOptions.FormatRtf, fileStream);
-			}
-			catch (Exception)
-			{
-				if (EditZone != null)
-				{
-					EditZone.TextDocument.SetText(TextSetOptions.None, "## Error Loading Content ##");
-				}
-			}
-
-		}
-	}
 ```
 
-Of particular note is the `MarkdownEditor_ViewChanged` event handler. We have used the [#pragma warning](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/preprocessor-directives/preprocessor-pragma-warning) compiler pre-processor directive to suppress warning messages for the use of deprecated `ScrollViewer` [ScrollToVerticalOffset](https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.scrollviewer.scrolltoverticaloffset) and [ScrollToHorizontalOffset](https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.scrollviewer.scrolltohorizontaloffset) methods. These methods, while deprecated, provide superior performance over the new [ChangeView](https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.scrollviewer.changeview#Windows_UI_Xaml_Controls_ScrollViewer_ChangeView_Windows_Foundation_IReference_System_Double__Windows_Foundation_IReference_System_Double__Windows_Foundation_IReference_System_Single__) method. `ChangeView` provides jumpy performance under the current implementation.  The deprecated methods may be removed in a future update.
+
 
 
 
